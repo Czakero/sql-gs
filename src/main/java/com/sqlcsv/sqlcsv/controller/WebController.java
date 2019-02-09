@@ -40,7 +40,7 @@ public class WebController {
     @GetMapping("/auth")
     public void getAuthPage(HttpServletResponse response) throws IOException, GeneralSecurityException {
         String url = GoogleAuthorizationFlow.getNewFlow().newAuthorizationUrl()
-                .setRedirectUri("http://localhost:8080/callback")
+                .setRedirectUri("https://sql-csv.herokuapp.com/callback")
                 .build();
         response.sendRedirect(url);
     }
@@ -69,14 +69,14 @@ public class WebController {
     public void getToken(HttpServletRequest request, HttpServletResponse response) throws IOException, GeneralSecurityException {
         String code = request.getParameter("code");
         authorizeAndSaveToken(code);
-        response.sendRedirect("http://localhost:8080/choose");
+        response.sendRedirect("https://sql-csv.herokuapp.com/choose");
     }
 
     private void authorizeAndSaveToken(String code) throws IOException, GeneralSecurityException {
         GoogleAuthorizationCodeFlow flow = GoogleAuthorizationFlow.getNewFlow();
         GoogleAuthorizationCodeTokenRequest query = flow
                 .newTokenRequest(code)
-                .setRedirectUri("http://localhost:8080/callback")
+                .setRedirectUri("https://sql-csv.herokuapp.com/callback")
                 .setClientAuthentication(flow.getClientAuthentication())
                 .setCode(code)
                 .set("response-type", "code")
