@@ -1,6 +1,6 @@
 ### SQL your CSV
 
-[![Build Status](https://travis-ci.org/Czakero/sql-your-csv.svg?branch=master)](https://travis-ci.org/Czakero/sql-your-csv)
+[![Build Status](https://travis-ci.org/Czakero/sql-your-csv.svg?branch=dev)](https://travis-ci.org/Czakero/sql-your-csv)
 
   Web app which allows to upload csv files and query them with SQL.
   
