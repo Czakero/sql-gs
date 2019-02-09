@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="bootstrap.css">
+    <link rel="stylesheet" th:href="style.css">
+    <script type="application/javascript" th:src="scripts.js"></script>
+    <title>SQL Your CSV!</title>
+</head>
+<body>
+    <div id="headerContainer">
+        <h1 id="header">SQL Your CSV</h1>
+    </div>
+    <div id="queryFormContainer">
+        <form id="inputForm" method="POST" onkeyup="parseQuery()">
+            <label id="inputLabel" for="query">Enter your query here: </label>
+            <input type="text" id="query" name="query" placeholder="SELECT * FROM xyz.csv">
+            <button type="submit" id="submitButton" disabled>SUBMIT</button>
+        </form>
+    </div>
+    <h2 class="tableInfo">Available CSV files</h2>
+    <!--TODO UPLOAD-->
+    <!--<div id="uploadFormContainer">-->
+        <!--<form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">-->
+            <!--<input type="file" name="file" multiple/><br/><br/>-->
+            <!--<input type="submit" value="Upload" />-->
+        <!--</form>-->
+    <!--</div>-->
+    <div id="filesTableContainer">
+        <table id="filesTable" class="table table-bordered">
+            <tbody th:each="element : ${sheetNames}">
+            <tr>
+                <td th:text="${element}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

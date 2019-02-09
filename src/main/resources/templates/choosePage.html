@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="bootstrap.css">
+    <link rel="stylesheet" th:href="style.css">
+    <script type="application/javascript" th:src="scripts.js"></script>
+    <title>SQL Your CSV!</title>
+</head>
+<body>
+
+<h2 class="tableInfo">Available Spreadsheets</h2>
+
+<div id="filesTableContainer">
+    <table id="filesTable" class="table table-bordered">
+        <tbody th:each="element : ${spreadsheets}">
+        <tr>
+            <td th:text="${element.key}"></td>
+            <td><form method="POST">
+                <input type="hidden" name="spreadsheetId" th:value="${element.value}">
+                <button type="submit" id="SpreadsheetSubmit">USE THIS</button>
+            </form></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
