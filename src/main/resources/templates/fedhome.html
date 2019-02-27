@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="bootstrap.css">
     <link rel="stylesheet" th:href="style.css">
-    <script type="application/javascript" th:src="scripts.js"></script>
     <title>SQL Your CSV!</title>
 </head>
 <body>
@@ -14,7 +13,7 @@
     <h1 id="header">SQL Your CSV</h1>
 </div>
 <div id="queryFormContainer">
-    <form id="inputForm" method="POST" onkeyup="parseQuery()">
+    <form id="inputForm" method="POST">
         <label id="inputLabel" for="query">Enter your query here: </label>
         <input type="text" id="query" name="query" placeholder="SELECT * FROM xyz.csv">
         <button type="submit" id="submitButton" disabled>SUBMIT</button>
