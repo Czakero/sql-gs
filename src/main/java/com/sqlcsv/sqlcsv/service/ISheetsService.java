@@ -7,6 +7,6 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 
 public interface ISheetsService {
-    Table getSheetFromSpreadsheet(String spreadsheetId, String sheetName) throws IOException, GeneralSecurityException;
-    List<String> getSheetsNamesFromSpreadsheet(String spreadsheetId) throws IOException, GeneralSecurityException;
+    Table getSheetFromSpreadsheet(String spreadsheetId, String sheetName, String userId) throws IOException, GeneralSecurityException;
+    List<String> getSheetsNamesFromSpreadsheet(String spreadsheetId, String userId) throws IOException, GeneralSecurityException;
 }

@@ -22,9 +22,9 @@ public class SheetsService implements ISheetsService {
     public SheetsService(SheetsParser sheetsParser) {
         this.sheetsParser = sheetsParser;
     }
-    @Override
-    public Table getSheetFromSpreadsheet(String spreadsheetId, String sheetName) throws IOException, GeneralSecurityException {
-        Sheets sheetsService = GoogleAuthorizationFlow.getSheetsService();
+
+    public Table getSheetFromSpreadsheet(String spreadsheetId, String sheetName, String userId) throws IOException, GeneralSecurityException {
+        Sheets sheetsService = GoogleAuthorizationFlow.getSheetsService(userId);
         ValueRange queryOutput = sheetsService.spreadsheets().values().get(spreadsheetId, sheetName).execute();
         List<String[]> data = queryOutput
                 .getValues()
@@ -37,9 +37,8 @@ public class SheetsService implements ISheetsService {
         return sheetsParser.getTableFromSheetValues(sheetName, data);
     }
 
-    @Override
-    public List<String> getSheetsNamesFromSpreadsheet(String spreadsheetId) throws IOException, GeneralSecurityException {
-        Sheets sheetsService = GoogleAuthorizationFlow.getSheetsService();
+    public List<String> getSheetsNamesFromSpreadsheet(String spreadsheetId, String userId) throws IOException, GeneralSecurityException {
+        Sheets sheetsService = GoogleAuthorizationFlow.getSheetsService(userId);
         Spreadsheet spreadsheet = sheetsService.spreadsheets().get(spreadsheetId).execute();
         List<Sheet> sheetsInSpreadsheet = spreadsheet.getSheets();
         return sheetsInSpreadsheet.stream().map(sheet -> sheet.getProperties().getTitle()).collect(Collectors.toList());

@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DriveService implements IDriveService {
-    public Map<String, String> getAllSpreadsheets() throws IOException, GeneralSecurityException {
-        Drive userDrive = GoogleAuthorizationFlow.getDriveService();
+    public Map<String, String> getAllSpreadsheets(String userId) throws IOException, GeneralSecurityException {
+        Drive userDrive = GoogleAuthorizationFlow.getDriveService(userId);
         Drive.Files.List request = userDrive.files().list();
         FileList files = request.execute();
 
