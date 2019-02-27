@@ -5,6 +5,7 @@ import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.sqlcsv.sqlcsv.google.GoogleAuthorizationFlow;
+import com.sqlcsv.sqlcsv.google.Services;
 import com.sqlcsv.sqlcsv.model.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,8 +26,8 @@ public class SheetsService implements ISheetsService {
     }
 
     public Table getSheetFromSpreadsheet(String spreadsheetId, String sheetName, String userId) throws IOException, GeneralSecurityException {
-        Sheets sheetsService = GoogleAuthorizationFlow.getSheetsService(userId);
-        ValueRange queryOutput = sheetsService.spreadsheets().values().get(spreadsheetId, sheetName).execute();
+        Sheets sheetsService = (Sheets) GoogleAuthorizationFlow.getService(Services.SHEETS, userId);
+        ValueRange queryOutput = Objects.requireNonNull(sheetsService).spreadsheets().values().get(spreadsheetId, sheetName).execute();
         List<String[]> data = queryOutput
                 .getValues()
                 .stream()
@@ -38,8 +40,8 @@ public class SheetsService implements ISheetsService {
     }
 
     public List<String> getSheetsNamesFromSpreadsheet(String spreadsheetId, String userId) throws IOException, GeneralSecurityException {
-        Sheets sheetsService = GoogleAuthorizationFlow.getSheetsService(userId);
-        Spreadsheet spreadsheet = sheetsService.spreadsheets().get(spreadsheetId).execute();
+        Sheets sheetsService = (Sheets) GoogleAuthorizationFlow.getService(Services.SHEETS, userId);
+        Spreadsheet spreadsheet = Objects.requireNonNull(sheetsService).spreadsheets().get(spreadsheetId).execute();
         List<Sheet> sheetsInSpreadsheet = spreadsheet.getSheets();
         return sheetsInSpreadsheet.stream().map(sheet -> sheet.getProperties().getTitle()).collect(Collectors.toList());
     }
