@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class SheetsParser {
-
     public Table getTableFromSheetValues(String sheetName, List<String[]> sheetValues) {
         return new Table(sheetName, sheetValues.stream()
                                                     .map(array -> new Row(Arrays.stream(array)
@@ -33,12 +32,6 @@ public class SheetsParser {
 //                                    ).collect(Collectors.toList())
 //                            )
 //                    ).collect(Collectors.toList());
-
-//        for (Table table : result) {
-//            System.out.println("Sheet name: " + table.getName());
-//            for (Row row : table.getRows()) {
-//                System.out.println("Sheet rows: " + row.getData());
-//            }
 //        }
     }
 }
