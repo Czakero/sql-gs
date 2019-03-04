@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.sqlcsv.sqlcsv.google.GoogleAuthorizationFlow;
 import com.sqlcsv.sqlcsv.service.IDriveService;
+import com.sqlcsv.sqlcsv.service.IQueryService;
 import com.sqlcsv.sqlcsv.service.ISheetsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,11 +31,13 @@ import java.util.Map;
 public class WebController {
     private IDriveService driveService;
     private ISheetsService sheetsService;
+    private IQueryService queryService;
 
     @Autowired
-    public WebController(IDriveService driveService, ISheetsService sheetsService) {
+    public WebController(IDriveService driveService, ISheetsService sheetsService, IQueryService queryService) {
         this.sheetsService = sheetsService;
         this.driveService = driveService;
+        this.queryService = queryService;
     }
 
     @GetMapping("/")
@@ -57,6 +60,12 @@ public class WebController {
         String userId = request.getSession().getAttribute("email").toString();
         List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
         model.addAttribute("sheetNames", sheetsNames);
+        return "home";
+    }
+
+    @PostMapping("/query")
+    public String doPost(@RequestParam("query") String query) {
+        System.out.println(query);
         return "home";
     }
 
