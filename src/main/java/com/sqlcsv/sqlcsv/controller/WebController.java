@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.sqlcsv.sqlcsv.controller.exception.ParseQueryException;
 import com.sqlcsv.sqlcsv.google.GoogleAuthorizationFlow;
+import com.sqlcsv.sqlcsv.model.Table;
 import com.sqlcsv.sqlcsv.service.IDriveService;
 import com.sqlcsv.sqlcsv.service.IQueryService;
 import com.sqlcsv.sqlcsv.service.ISheetsService;
@@ -56,17 +58,23 @@ public class WebController {
 
     @GetMapping("/query")
     public String doGet(HttpServletRequest request, Model model) throws IOException, GeneralSecurityException {
-        String spreadsheetId =  request.getParameter("spreadsheetId");
+        String spreadsheetId =  request.getSession().getAttribute("spreadsheetId").toString();
         String userId = request.getSession().getAttribute("email").toString();
         List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
         model.addAttribute("sheetNames", sheetsNames);
-        return "home";
+        return "queryPage";
     }
 
     @PostMapping("/query")
-    public String doPost(@RequestParam("query") String query) {
-        System.out.println(query);
-        return "home";
+    public String doPost(@RequestParam("query") String query, Model model, HttpServletRequest request) throws IOException, GeneralSecurityException, ParseQueryException {
+
+        Table result = queryService.handleQuery(query);
+        String userId = request.getSession().getAttribute("email").toString();
+        String spreadsheetId = request.getSession().getAttribute("spreadsheetId").toString();
+        List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
+        model.addAttribute("table", result);
+        model.addAttribute("sheetNames", sheetsNames);
+        return "resultPage";
     }
 
     @GetMapping("/choose")
@@ -78,8 +86,10 @@ public class WebController {
     }
 
     @PostMapping("/choose")
-    public void redirectToQueryPage(HttpServletResponse response, @RequestParam("spreadsheetId") String spreadsheetId) throws IOException {
-        response.sendRedirect("/query?spreadsheetId=" + spreadsheetId);
+    public void redirectToQueryPage(HttpServletResponse response, @RequestParam("spreadsheetId") String spreadsheetId, HttpServletRequest request) throws IOException {
+        HttpSession session = request.getSession();
+        session.setAttribute("spreadsheetId", spreadsheetId);
+        response.sendRedirect("/query");
     }
 
     @GetMapping("/callback")
