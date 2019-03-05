@@ -2,6 +2,7 @@ package com.sqlcsv.sqlcsv.service;
 
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.SheetProperties;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.sqlcsv.sqlcsv.google.GoogleAuthorizationFlow;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,20 @@ public class SheetsService implements ISheetsService {
         Sheets sheetsService = (Sheets) GoogleAuthorizationFlow.getService(Services.SHEETS, userId);
         Spreadsheet spreadsheet = Objects.requireNonNull(sheetsService).spreadsheets().get(spreadsheetId).execute();
         List<Sheet> sheetsInSpreadsheet = spreadsheet.getSheets();
-        return sheetsInSpreadsheet.stream().map(sheet -> sheet.getProperties().getTitle()).collect(Collectors.toList());
+        return sheetsInSpreadsheet
+                .stream()
+                .map(sheet -> sheet.getProperties().getTitle())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, String> getSheetsWithIds(String spreadsheetId, String userId) throws IOException, GeneralSecurityException {
+        Sheets sheetsService = (Sheets) GoogleAuthorizationFlow.getService(Services.SHEETS, userId);
+        Spreadsheet spreadsheet = Objects.requireNonNull(sheetsService).spreadsheets().get(spreadsheetId).execute();
+        List<Sheet> sheetsInSpreadsheet = spreadsheet.getSheets();
+        return sheetsInSpreadsheet
+                .stream()
+                .map(Sheet::getProperties)
+                .collect(Collectors.toMap(SheetProperties::getTitle, properties -> properties.getSheetId().toString()));
     }
 }
