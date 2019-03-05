@@ -68,9 +68,9 @@ public class WebController {
     @PostMapping("/query")
     public String doPost(@RequestParam("query") String query, Model model, HttpServletRequest request) throws IOException, GeneralSecurityException, ParseQueryException {
 
-        Table result = queryService.handleQuery(query);
         String userId = request.getSession().getAttribute("email").toString();
         String spreadsheetId = request.getSession().getAttribute("spreadsheetId").toString();
+        Table result = queryService.handleQuery(query, spreadsheetId, userId);
         List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
         model.addAttribute("table", result);
         model.addAttribute("sheetNames", sheetsNames);
