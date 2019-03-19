@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 public class Table {
     private String name;
     private List<Row> rows;
