@@ -16,6 +16,14 @@ public class SheetsParser {
                                                     .collect(Collectors.toList())))
                                                 .collect(Collectors.toList()));
 
+
+    }
+
+    public String[][] getDoubleArrayFromSheetValues(List<String[]> sheetValues) {
+        return Arrays.stream(sheetValues.toArray()).toArray(String[][]::new);
+    }
+}
+
 //            result = sheets
 //                    .stream()
 //                    .map(sheet ->
@@ -33,5 +41,3 @@ public class SheetsParser {
 //                            )
 //                    ).collect(Collectors.toList());
 //        }
-    }
-}
