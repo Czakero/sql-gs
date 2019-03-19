@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public interface IQueryService {
-    Table handleQuery(String query, String spreadsheetId, String userId) throws ParseQueryException, IOException, GeneralSecurityException;
+    String[][] handleQuery(String query, String spreadsheetId, String userId) throws ParseQueryException, IOException, GeneralSecurityException;
 }
