@@ -15,15 +15,22 @@ import java.security.GeneralSecurityException;
 public class ExceptionController {
 
     @ResponseStatus(value = HttpStatus.PERMANENT_REDIRECT)
-    @ExceptionHandler(value = ParseQueryException.class)
+    @ExceptionHandler(ParseQueryException.class)
     public String handleException(ParseQueryException exception, Model model) {
         model.addAttribute("message", exception.getMessage());
         return "parseQueryExceptionPage";
     }
 
     @ResponseStatus(value = HttpStatus.PERMANENT_REDIRECT)
-    @ExceptionHandler({GeneralSecurityException.class, IOException.class})
+    @ExceptionHandler(GeneralSecurityException.class)
     public void handleIOandGSEException(HttpServletResponse response) throws IOException {
         response.sendRedirect("/auth");
+    }
+
+    @ResponseStatus(value = HttpStatus.PERMANENT_REDIRECT)
+    @ExceptionHandler(IOException.class)
+    public String handleIOException(IOException exception, Model model) {
+        model.addAttribute("message", exception.getMessage());
+        return "parseQueryExceptionPage";
     }
 }
