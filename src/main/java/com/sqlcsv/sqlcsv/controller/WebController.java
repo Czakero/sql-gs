@@ -70,7 +70,7 @@ public class WebController {
 
         String userId = request.getSession().getAttribute("email").toString();
         String spreadsheetId = request.getSession().getAttribute("spreadsheetId").toString();
-        Table result = queryService.handleQuery(query, spreadsheetId, userId);
+        String[][] result = queryService.handleQuery(query, spreadsheetId, userId);
         List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
         model.addAttribute("table", result);
         model.addAttribute("sheetNames", sheetsNames);
