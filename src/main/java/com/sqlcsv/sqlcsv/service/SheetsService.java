@@ -7,7 +7,6 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.sqlcsv.sqlcsv.google.GoogleAuthorizationFlow;
 import com.sqlcsv.sqlcsv.google.Services;
-import com.sqlcsv.sqlcsv.model.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class SheetsService implements ISheetsService {
         this.sheetsParser = sheetsParser;
     }
 
-    public Table getSheetFromSpreadsheet(String spreadsheetId, String sheetName, String userId) throws IOException, GeneralSecurityException {
+    public String[][] getSheetFromSpreadsheet(String spreadsheetId, String sheetName, String userId) throws IOException, GeneralSecurityException {
         Sheets sheetsService = (Sheets) GoogleAuthorizationFlow.getService(Services.SHEETS, userId);
         ValueRange queryOutput = Objects.requireNonNull(sheetsService).spreadsheets().values().get(spreadsheetId, sheetName).execute();
         List<String[]> data = queryOutput
@@ -38,7 +37,7 @@ public class SheetsService implements ISheetsService {
                         .map(element -> (String) element)
                         .toArray(String[]::new))
                 .collect(Collectors.toList());
-        return sheetsParser.getTableFromSheetValues(sheetName, data);
+        return sheetsParser.getDoubleArrayFromSheetValues(data);
     }
 
     public List<String> getSheetsNamesFromSpreadsheet(String spreadsheetId, String userId) throws IOException, GeneralSecurityException {
