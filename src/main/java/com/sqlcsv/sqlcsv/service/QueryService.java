@@ -1,7 +1,8 @@
 package com.sqlcsv.sqlcsv.service;
 
 import com.sqlcsv.sqlcsv.controller.exception.ParseQueryException;
-import com.sqlcsv.sqlcsv.model.SQLKeywords;
+import com.sqlcsv.sqlcsv.enums.SQLKeywords;
+import com.sqlcsv.sqlcsv.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
