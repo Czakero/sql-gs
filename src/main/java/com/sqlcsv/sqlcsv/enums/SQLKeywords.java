@@ -1,28 +1,20 @@
-package com.sqlcsv.sqlcsv.model;
+package com.sqlcsv.sqlcsv.enums;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Optional;
 
 public enum SQLKeywords implements Comparable<SQLKeywords> {
 
-    FROM("FROM", 0),
-    WHERE("WHERE", 1),
-    SELECT("SELECT", 2),
-    LIMIT("LIMIT", 3),
-    OFFSET("OFFSET", 4);
+    FROM("FROM"),
+    WHERE("WHERE"),
+    SELECT("SELECT"),
+    OFFSET("OFFSET"),
+    LIMIT("LIMIT");
 
     private final String name;
-    private final int placeInOrderOfExecution;
 
-    SQLKeywords(String select, int i) {
-        this.name = select;
-        this.placeInOrderOfExecution = i;
-    }
-
-
-    public static Comparator<SQLKeywords> getComparator() {
-        return Comparator.comparingInt(t -> t.placeInOrderOfExecution);
+    SQLKeywords(String name) {
+        this.name = name;
     }
 
     public static boolean contains(String keyword) {
