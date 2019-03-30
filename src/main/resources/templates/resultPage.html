@@ -16,7 +16,7 @@
     <form id="inputForm" method="POST">
         <label id="inputLabel" for="query">Enter your query here: </label>
         <input type="text" id="query" name="query" placeholder="SELECT * FROM xyz.csv">
-        <button type="submit" id="submitButton" disabled>SUBMIT</button>
+        <button type="submit" id="submitButton">SUBMIT</button>
     </form>
 </div>
 <h2 class="tableInfo">Available CSV files</h2>
@@ -30,15 +30,20 @@
 <div id="filesTableContainer">
     <table id="filesTable" class="table table-bordered">
         <tbody th:each="element : ${sheetNames}">
-        <tr>
-            <td th:text="${element}"></td>
-        </tr>
+            <tr>
+                <td th:text="${element}"></td>
+            </tr>
         </tbody>
     </table>
 </div>
 <h2 class="tableInfo">Result:</h2>
 <div id="resultTableContainer">
     <table id="resultTable" class="table table-bordered">
+        <tbody th:each="row : ${table}">
+            <tr>
+                <td th:each="value : ${row}" th:text="${value}"></td>
+            </tr>
+        </tbody>
     </table>
 </div>
 </body>
