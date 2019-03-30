@@ -1,6 +1,6 @@
 ### SQL your CSV
 
-[![Build Status](https://travis-ci.org/Czakero/sql-your-csv.svg?branch=dev)](https://travis-ci.org/Czakero/sql-your-csv)
+[![Build Status](https://travis-ci.org/Czakero/sql-gs.svg?branch=dev)](https://travis-ci.org/Czakero/sql-gs)
 
   Web-app which uses Google API for authorization and retrieving services (sheets, drive)
   to let user obtain data from their sheets, stored on google drive with simple SQL queries.
