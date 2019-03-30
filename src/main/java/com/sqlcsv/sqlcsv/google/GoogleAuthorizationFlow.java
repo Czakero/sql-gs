@@ -11,6 +11,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.sqlcsv.sqlcsv.enums.ServicesEnum;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +32,10 @@ public class GoogleAuthorizationFlow {
     private static final java.io.File CREDENTIALS_FOLDER = new java.io.File("src/main/resources");
     private static final String CLIENT_SECRET_FILE_NAME = "client_secret.json";
     private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_READONLY, SheetsScopes.SPREADSHEETS_READONLY, "https://www.googleapis.com/auth/userinfo.email");
-    private static GoogleAuthorizationCodeFlow flow;
 
-    public static GoogleAuthorizationCodeFlow getNewFlow() throws IOException, GeneralSecurityException {
-        return flow = new GoogleAuthorizationCodeFlow.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY,
+
+    public static GoogleAuthorizationCodeFlow getFlow() throws IOException, GeneralSecurityException {
+        return new GoogleAuthorizationCodeFlow.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY,
                 getClientSecrets(), SCOPES).setDataStoreFactory(new FileDataStoreFactory(CREDENTIALS_FOLDER))
                 .setAccessType("offline").setApprovalPrompt("force").build();
     }
@@ -45,13 +46,15 @@ public class GoogleAuthorizationFlow {
         return GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(clientSecretInputStream));
     }
 
-    public static AbstractGoogleJsonClient getService(Services service, String userId) throws IOException, GeneralSecurityException {
-        if (service.equals(Services.DRIVE)) {
-            return new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, flow.loadCredential(userId))
+    public static AbstractGoogleJsonClient getService(ServicesEnum service, String userId) throws IOException, GeneralSecurityException {
+        if (service.equals(ServicesEnum.DRIVE)) {
+            return new Drive
+                    .Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, getFlow().loadCredential(userId))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
-        } else if (service.equals(Services.SHEETS)) {
-            return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, flow.loadCredential(userId))
+        } else if (service.equals(ServicesEnum.SHEETS)) {
+            return new Sheets
+                    .Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, getFlow().loadCredential(userId))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
         }
