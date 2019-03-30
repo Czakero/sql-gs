@@ -1,4 +1,4 @@
-package com.sqlcsv.sqlcsv.service;
+package com.sqlcsv.sqlcsv.interfaces;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

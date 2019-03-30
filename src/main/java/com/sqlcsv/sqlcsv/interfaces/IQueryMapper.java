@@ -1,7 +1,7 @@
-package com.sqlcsv.sqlcsv.service;
+package com.sqlcsv.sqlcsv.interfaces;
 
 import com.sqlcsv.sqlcsv.controller.exception.ParseQueryException;
-import com.sqlcsv.sqlcsv.model.SQLKeywords;
+import com.sqlcsv.sqlcsv.enums.SQLKeywords;
 
 import java.util.ArrayList;
 import java.util.Arrays;
