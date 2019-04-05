@@ -1,11 +1,10 @@
 package com.sqlcsv.sqlcsv.controller;
 
-import com.google.api.client.auth.oauth2.TokenResponse;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.sqlcsv.sqlcsv.google.GoogleAuthorizationFlow;
-import com.sqlcsv.sqlcsv.service.IDriveService;
-import com.sqlcsv.sqlcsv.service.ISheetsService;
+import com.sqlcsv.sqlcsv.controller.exception.ParseQueryException;
+import com.sqlcsv.sqlcsv.interfaces.IAuthService;
+import com.sqlcsv.sqlcsv.interfaces.IDriveService;
+import com.sqlcsv.sqlcsv.interfaces.IQueryService;
+import com.sqlcsv.sqlcsv.interfaces.ISheetsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +24,15 @@ import java.util.Map;
 public class WebController {
     private IDriveService driveService;
     private ISheetsService sheetsService;
+    private IQueryService queryService;
+    private IAuthService authService;
 
     @Autowired
-    public WebController(IDriveService driveService, ISheetsService sheetsService) {
+    public WebController(IDriveService driveService, ISheetsService sheetsService, IQueryService queryService, IAuthService authService) {
         this.sheetsService = sheetsService;
         this.driveService = driveService;
+        this.queryService = queryService;
+        this.authService = authService;
     }
 
     @GetMapping("/")
@@ -36,53 +40,49 @@ public class WebController {
         response.sendRedirect("/auth");
     }
 
-
     @GetMapping("/auth")
     public void getAuthPage(HttpServletResponse response) throws IOException, GeneralSecurityException {
-        String url = GoogleAuthorizationFlow.getNewFlow().newAuthorizationUrl()
-                .setRedirectUri("https://sql-csv.herokuapp.com/callback")
-                .build();
-        response.sendRedirect(url);
+        response.sendRedirect(authService.createNewAuthorizationUrl());
     }
 
     @GetMapping("/query")
     public String doGet(HttpServletRequest request, Model model) throws IOException, GeneralSecurityException {
-        String spreadsheetId =  request.getParameter("spreadsheetId");
-        List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId);
+        String spreadsheetId =  request.getSession().getAttribute("spreadsheetId").toString();
+        String userId = request.getSession().getAttribute("email").toString();
+        List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
         model.addAttribute("sheetNames", sheetsNames);
-        return "home";
+        return "queryPage";
+    }
+
+    @PostMapping("/query")
+    public String doPost(@RequestParam("query") String query, Model model, HttpServletRequest request) throws IOException, GeneralSecurityException, ParseQueryException {
+        String userId = request.getSession().getAttribute("email").toString();
+        String spreadsheetId = request.getSession().getAttribute("spreadsheetId").toString();
+        List<String> sheetsNames = sheetsService.getSheetsNamesFromSpreadsheet(spreadsheetId, userId);
+        model.addAttribute("table", queryService.handleQuery(query, spreadsheetId, userId));
+        model.addAttribute("sheetNames", sheetsNames);
+        return "resultPage";
     }
 
     @GetMapping("/choose")
-    public String getChoosePage(Model model) throws IOException, GeneralSecurityException {
-        Map<String, String> spreadsheets = driveService.getAllSpreadsheets();
+    public String getChoosePage(Model model, HttpServletRequest request) throws IOException, GeneralSecurityException {
+        String userId = request.getSession().getAttribute("email").toString();
+        Map<String, String> spreadsheets = driveService.getAllSpreadsheets(userId);
         model.addAttribute("spreadsheets", spreadsheets);
         return "choosePage";
     }
 
     @PostMapping("/choose")
-    public void redirectToQueryPage(HttpServletResponse response, @RequestParam("spreadsheetId") String spreadsheetId) throws IOException {
-        response.sendRedirect("/query?spreadsheetId=" + spreadsheetId);
+    public void redirectToQueryPage(HttpServletResponse response, @RequestParam("spreadsheetId") String spreadsheetId, HttpServletRequest request) throws IOException {
+        request.getSession().setAttribute("spreadsheetId", spreadsheetId);
+        response.sendRedirect("/query");
     }
 
     @GetMapping("/callback")
     public void getToken(HttpServletRequest request, HttpServletResponse response) throws IOException, GeneralSecurityException {
         String code = request.getParameter("code");
-        authorizeAndSaveToken(code);
-        response.sendRedirect("https://sql-csv.herokuapp.com/choose");
-    }
-
-    private void authorizeAndSaveToken(String code) throws IOException, GeneralSecurityException {
-        GoogleAuthorizationCodeFlow flow = GoogleAuthorizationFlow.getNewFlow();
-        GoogleAuthorizationCodeTokenRequest query = flow
-                .newTokenRequest(code)
-                .setRedirectUri("https://sql-csv.herokuapp.com/callback")
-                .setClientAuthentication(flow.getClientAuthentication())
-                .setCode(code)
-                .set("response-type", "code")
-                .setGrantType("authorization_code");
-
-        TokenResponse tokenResponse = query.execute();
-        flow.createAndStoreCredential(tokenResponse,"user");
+        String email = authService.authorizeAndSaveToken(code);
+        request.getSession().setAttribute("email", email);
+        response.sendRedirect("/choose");
     }
 }
